@@ -3,10 +3,10 @@
 const getData = (url) => {
     return fetch(url)
     .then(response => response.json())
-    .catch(error => 'Ошибка: ' + error)
+    .catch(error => console.log('Ошибка: ' + error))
 }
 
-const setData = (url, obj) => {
+const sendData = (url, obj) => {
     return fetch(url, {
         method: 'POST',
         body: JSON.stringify(obj),
@@ -14,12 +14,18 @@ const setData = (url, obj) => {
             'Content-type': 'application/json; charset=UTF-8',
         },
     })
-    .then((response) => response.json())
+    .then((response) => {
+        if (response.ok) {
+            return response.json()
+        } else {
+            throw 'сервер не найден'
+        }
+    })
     .then((json) => console.log(json))
-    .catch(error => 'Ошибка: ' + error)
+    .catch(error => console.log('Ошибка: ' + error))
 }
 
 getData('./db.json').then(data => {
-    setData('https://jsonplaceholder.typicode.com/posts', data)
+    sendData('https://jsonplaceholder.typicode.com/posts', data)
 })
 
